@@ -33,9 +33,7 @@
   (let ((songbook-mode-map (make-keymap)))
     (define-key songbook-mode-map "\C-j" 'newline-and-indent)
     songbook-mode-map)
-  "Keymap for SONGBOOK major mode")
-
-(add-to-list 'auto-mode-alist '("\\.wpd\\'" . songbook-mode))
+  "Keymap for Songbook major mode")
 
 (defconst songbook-font-lock-keywords-1
   (list
@@ -98,12 +96,12 @@
 (defvar songbook-mode-syntax-table
   (let ((songbook-mode-syntax-table (make-syntax-table)))
     
-					; Comment styles are same as C++
+					; Latex comment style
     (modify-syntax-entry ?% "<" songbook-mode-syntax-table)
     (modify-syntax-entry ?\n ">" songbook-mode-syntax-table)
     songbook-mode-syntax-table)
   "Syntax table for songbook-mode")
-  
+
 (defun songbook-mode ()
   (interactive)
   (kill-all-local-variables)
@@ -114,7 +112,7 @@
   ;; Register our indentation function
   (set (make-local-variable 'indent-line-function) 'songbook-indent-line)  
   (setq major-mode 'songbook-mode)
-  (setq mode-name "SONGBOOK")
+  (setq mode-name "Songbook")
   (run-hooks 'songbook-mode-hook))
 
 (provide 'songbook-mode)
