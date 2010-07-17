@@ -46,7 +46,7 @@
   (append songbook-font-lock-keywords-1
 	  (list
 					; songbook commands
-	   '("\\\\\\(capo\\|gtab\\|lilypond\\|rep\\|echo\\|dots\\|cover\\|image\\|musicnote\\|textnote\\)" . font-lock-keyword-face)
+	   '("\\\\\\(capo\\|gtab\\|lilypond\\|rep\\|echo\\|dots\\|cover\\|image\\|musicnote\\|textnote\\|emph\\|nolyrics\\)" . font-lock-keyword-face)
 	   '("\\\\\\[[^\]]+\]\\|\\\\bar" . 'font-lock-variable-name-face) ;chords are in the form \[C7]
 	   '("\\\\single" . font-lock-constant-face) ; tab's environment commands
 	   '("``.+" . font-lock-string-face))) ; latex style strings //fixme: catch between `` and ''
