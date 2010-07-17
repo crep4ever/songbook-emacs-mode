@@ -7,13 +7,10 @@ Make the folder if it does not already exist.
 Then, append the following lines in your emacs configuration file ~/.emacs
 (make it if it does not exist yet):
 
-
 (setq load-path (cons "~/.config/emacs" load-path))
-(setq auto-mode-alist
-      (append '(("\\.sg$" . songbook-mode)
-		) auto-mode-alist))
-(autoload 'songbook-mode "songbook" "Major-mode for Patacrep songbook's songs" t)
-
+(setq auto-mode-alist (cons '("\\.sg$" . songbook-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.sbd$" . songbook-mode) auto-mode-alist))
+(autoload 'songbook-mode "songbook" "Major mode for Patacrep's songbooks" t)
 
 Files are hosted as a git project on github: 
 http://github.com/crep4ever/songbook-emacs-mode.git
