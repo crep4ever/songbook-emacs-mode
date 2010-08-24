@@ -38,7 +38,7 @@
 (defconst songbook-font-lock-keywords-1
   (list
 					;songbook environments
-   '("\\\\\\(begin{tab}\\|end{tab}\\|begin\\(song\\|verse\\|chorus\\)\\|end\\(song\\|verse\\|chorus\\)\\)" . font-lock-type-face)
+   '("\\\\\\(begin{tab}\\|end{tab}\\|begin\\(song\\|verse\\|chorus\\|scripture\\)\\|end\\(song\\|verse\\|chorus\\|scripture\\)\\)" . font-lock-type-face)
    '("\\('\\w*'\\)" . font-lock-variable-name-face))
   "Minimal highlighting expressions for Songbook mode.")
 
