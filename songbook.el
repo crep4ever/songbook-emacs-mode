@@ -56,7 +56,7 @@
   (append songbook-font-lock-keywords-2
 	  (list
 					; songbook preprocessing
-	   '("\\<\\(songcolumns\\)\\>" . font-lock-preprocessor-face)))
+	   '("\\<\\(songcolumns\\|selectlanguage\\)\\>" . font-lock-preprocessor-face)))
   "Balls-out highlighting in SONGBOOK mode.")
 
 (defvar songbook-font-lock-keywords songbook-font-lock-keywords-3
