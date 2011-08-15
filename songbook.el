@@ -38,7 +38,7 @@
 (defconst songbook-font-lock-keywords-1
   (list
 					;songbook environments
-   '("\\\\\\(begin{tab}\\|end{tab}\\|begin\\(song\\|verse\\|chorus\\|scripture\\)\\|end\\(song\\|verse\\|chorus\\|scripture\\)\\)" . font-lock-type-face)
+   '("\\\\\\(begin{\\(tab\\|song\\|verse\\|chorus\\|scripture\\|bridge\\)}\\|end{\\(tab\\|song\\|verse\\|chorus\\|scripture\\|bridge\\)}\\|begin\\(song\\|verse\\|chorus\\|scripture\\|bridge\\)\\|end\\(song\\|verse\\|chorus\\|scripture\\)\\)" . font-lock-type-face)
    '("\\('\\w*'\\)" . font-lock-variable-name-face))
   "Minimal highlighting expressions for Songbook mode.")
 
@@ -69,7 +69,7 @@
   (if (bobp)
       (indent-line-to 0)	   ; First line is always non-indented
     (let ((not-indented t) cur-indent)
-      (if (looking-at "^[ \t]*\\(\\\\end\\(song\\|verse\\|chorus\\)\\)") ; If the line we are looking at is the end of a block, then decrease the indentation
+      (if (looking-at "^[ \t]*\\(\\\\end\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)\\|\\\\end{\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)}\\)") ; If the line we are looking at is the end of a block, then decrease the indentation
 	  (progn
 	    (save-excursion
 	      (forward-line -1)
@@ -79,11 +79,11 @@
 	(save-excursion
 	  (while not-indented ; Iterate backwards until we find an indentation hint
 	    (forward-line -1)
-	    (if (looking-at "^[ \t]*\\(\\\\end\\(song\\|verse\\|chorus\\)\\)") ; This hint indicates that we need to indent at the level of the END_ token
+	    (if (looking-at "^[ \t]*\\(\\\\end\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)\\|\\\\end{\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)}\\)") ; This hint indicates that we need to indent at the level of the END_ token
 		(progn
 		  (setq cur-indent (current-indentation))
 		  (setq not-indented nil))
-	      (if (looking-at "^[ \t]*\\(\\\\begin\\(song\\|verse\\|chorus\\)\\)") ; This hint indicates that we need to indent an extra level
+	      (if (looking-at "^[ \t]*\\(\\\\begin\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)\\|\\\\begin{\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)}\\)") ; This hint indicates that we need to indent an extra level
 		  (progn
 		    (setq cur-indent (+ (current-indentation) 2)) ; Do the actual indenting
 		    (setq not-indented nil))
