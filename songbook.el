@@ -50,6 +50,7 @@
 	   '("\\\\\\(capo\\|gtab\\|lilypond\\|rep\\|echo\\|dots\\|cover\\|image\\|musicnote\\|textnote\\|emph\\|nolyrics\\)" . font-lock-type-face)
 	   '("\\\\\\[[^\]]+\]\\|\\\\bar" . 'font-lock-variable-name-face) ;chords are in the form \[C7]
 	   '("\\\\single" . font-lock-constant-face) ; tab's environment commands
+	   '("{\\\\og}.+{\\\\fg}" . font-lock-string-face)
 	   '("{[^}]+}" . font-lock-function-name-face) ; tab's environment commands
 	   '("``.+" . font-lock-string-face))) ; latex style strings //fixme: catch between `` and ''
   "Additional Keywords to highlight in Songbook mode.")
