@@ -10,7 +10,7 @@ Songbook](http://www.patacrep.com).
 
 # Install
 
-Move the file `songbook.el' in the emacs load path. For example :
+Move the file `songbook.el` in the emacs load path. For example :
 
 >     mkdir -p ~/.config/emacs/
 >     cp songbook.el ~/.config/emacs/
@@ -19,9 +19,9 @@ Move the file `songbook.el' in the emacs load path. For example :
 Then, configure your `.emacs' to associate automatically the
 songbook-mode with sg files :
 
->     echo "(setq load-path (cons "~/.config/emacs" load-path))" >> ~/.emacs
->     echo "(setq auto-mode-alist (cons '("\\.sg$" . songbook-mode) auto-mode-alist))" >> ~/.emacs
->     echo "(setq auto-mode-alist (cons '("\\.sbd$" . songbook-mode) auto-mode-alist))" >> ~/.emacs
->     echo "(autoload 'songbook-mode "songbook" "Major mode for Patacrep's songbooks" t)" >> ~/.emacs
+>     echo "(setq load-path (cons \"~/.config/emacs\" load-path))" >> ~/.emacs
+>     echo "(setq auto-mode-alist (cons '(\"\\.sg$\" . songbook-mode) auto-mode-alist))" >> ~/.emacs
+>     echo "(setq auto-mode-alist (cons '(\"\\.sbd$\" . songbook-mode) auto-mode-alist))" >> ~/.emacs
+>     echo "(autoload 'songbook-mode \"songbook\" \"Major mode for Patacrep's songbooks\" t)" >> ~/.emacs
 
 =====
