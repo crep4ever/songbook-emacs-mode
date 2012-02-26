@@ -47,7 +47,7 @@
   (append songbook-font-lock-keywords-1
 	  (list
 					; songbook commands
-	   '("\\\\\\(capo\\|gtab\\|lilypond\\|rep\\|echo\\|dots\\|cover\\|image\\|musicnote\\|textnote\\|emph\\|nolyrics\\)" . font-lock-type-face)
+	   '("\\\\\\(capo\\|gtab\\|lilypond\\|rep\\|echo\\|dots\\|cover\\|image\\|musicnote\\|textnote\\|emph\\|nolyrics\\|Intro\\|Outro\\|Chorus\\|Verse\\|Bridge\\|Solo\\|Pattern\\|Rythm\\)" . font-lock-type-face)
 	   '("\\\\\\[[^\]]+\]\\|\\\\bar" . 'font-lock-variable-name-face) ;chords are in the form \[C7]
 	   '("\\\\single" . font-lock-constant-face) ; tab's environment commands
 	   '("{\\\\og}.+{\\\\fg}" . font-lock-string-face)
@@ -72,7 +72,7 @@
   (if (bobp)
       (indent-line-to 0)	   ; First line is always non-indented
     (let ((not-indented t) cur-indent)
-      (if (looking-at "^[ \t]*\\(\\\\end\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)\\|\\\\end{\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)}\\)") ; If the line we are looking at is the end of a block, then decrease the indentation
+      (if (looking-at "^[ \t]*\\(\\\\end\\)") ; If the line we are looking at is the end of a block, then decrease the indentation
 	  (progn
 	    (save-excursion
 	      (forward-line -1)
@@ -82,11 +82,11 @@
 	(save-excursion
 	  (while not-indented ; Iterate backwards until we find an indentation hint
 	    (forward-line -1)
-	    (if (looking-at "^[ \t]*\\(\\\\end\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)\\|\\\\end{\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)}\\)") ; This hint indicates that we need to indent at the level of the END_ token
+	    (if (looking-at "^[ \t]*\\(\\\\end\\)") ; This hint indicates that we need to indent at the level of the END_ token
 		(progn
 		  (setq cur-indent (current-indentation))
 		  (setq not-indented nil))
-	      (if (looking-at "^[ \t]*\\(\\\\begin\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)\\|\\\\begin{\\(song\\|verse\\|chorus\\|bridge\\|scripture\\)}\\)") ; This hint indicates that we need to indent an extra level
+	      (if (looking-at "^[ \t]*\\(\\\\begin\\)") ; This hint indicates that we need to indent an extra level
 		  (progn
 		    (setq cur-indent (+ (current-indentation) 2)) ; Do the actual indenting
 		    (setq not-indented nil))
