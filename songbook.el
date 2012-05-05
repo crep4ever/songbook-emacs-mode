@@ -1,10 +1,10 @@
-;;; songbook-mode-el -- Major mode for editing the song files of Patacrep songbook
+;;; songbook.el -- Major mode for editing the song files of Patacrep songbook
 
 ;; Author: Romain Goffe <romain.goffe@gmail.com>
 ;; Created: Feb 28 2010
-;; Keywords: patacrep songbook major-mode
+;; Keywords: patacrep songbook emacs-mode
 
-;; Copyright (C) 2010 Romain Goffe <romain.goffe@gmail.com>
+;; Copyright (C) 2010-2012 Romain Goffe <romain.goffe@gmail.com>
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -22,57 +22,37 @@
 ;; MA 02111-1307 USA
 
 ;;; Commentary:
-;; This mode was higly inspired from the work of 
+;; The indentation method is based on the work of
 ;; Scott Andrew Borton <scott@pp.htv.fi>
 ;; through is tutorial on emacs modes:
 ;; http://two-wugs.net/emacs/mode-tutorial.html
 
-;; songbook mode
-(defvar songbook-mode-hook nil)
-(defvar songbook-mode-map
-  (let ((songbook-mode-map (make-keymap)))
-    (define-key songbook-mode-map "\C-j" 'newline-and-indent)
-    songbook-mode-map)
-  "Keymap for Songbook major mode")
+(defvar songbook-commands
+  '("capo" "gtab" "utab" "lilypond" "image" "nolyrics")
+  "Patacrep songbook commands.")
 
-(defconst songbook-font-lock-keywords-1
-  (list
-					;songbook environments
-   '("\\\\\\(begin\\(song\\|verse\\|chorus\\|scripture\\|bridge\\)\\|end\\(song\\|verse\\|chorus\\|scripture\\)\\)" . font-lock-keyword-face)
-   '("\\\\begin\\|\\\\end" . font-lock-keyword-face)
-   '("\\('\\w*'\\)" . font-lock-variable-name-face))
-  "Minimal highlighting expressions for Songbook mode.")
+(defvar songbook-macros
+  '("cover" "Intro" "Outro" "Bridge" "Pattern")
+  "Patacrep songbook macros.")
 
-(defconst songbook-font-lock-keywords-2
-  (append songbook-font-lock-keywords-1
-	  (list
-					; songbook commands
-	   '("\\\\\\(capo\\|gtab\\|lilypond\\|rep\\|echo\\|dots\\|cover\\|image\\|musicnote\\|textnote\\|emph\\|nolyrics\\|Intro\\|Outro\\|Chorus\\|Verse\\|Bridge\\|Solo\\|Pattern\\|Rythm\\)" . font-lock-type-face)
-	   '("\\\\\\[[^\]]+\]\\|\\\\bar" . 'font-lock-variable-name-face) ;chords are in the form \[C7]
-	   '("\\\\single" . font-lock-constant-face) ; tab's environment commands
-	   '("{\\\\og}.+{\\\\fg}" . font-lock-string-face)
-	   '("{[^}]+}" . font-lock-function-name-face) ; tab's environment commands
-	   '("``.+" . font-lock-string-face))) ; latex style strings //fixme: catch between `` and ''
-  "Additional Keywords to highlight in Songbook mode.")
+;; create the regex string for each class of keywords
+(defvar songbook-commands-regexp
+  (concat "\\\\\\(" (mapconcat 'identity songbook-commands "\\|") "\\)"))
+(defvar songbook-macros-regexp
+  (concat "\\\\\\(" (mapconcat 'identity songbook-macros "\\|") "\\)"))
 
-(defconst songbook-font-lock-keywords-3
-  (append songbook-font-lock-keywords-2
-	  (list
-					; songbook preprocessing
-	   '("\\<\\(songcolumns\\|selectlanguage\\)\\>" . font-lock-preprocessor-face)))
-  "Balls-out highlighting in SONGBOOK mode.")
-
-(defvar songbook-font-lock-keywords songbook-font-lock-keywords-3
-  "Default highlighting expressions for Songbook mode.")
+;;clear memory
+(setq songbook-commands nil)
+(setq mylsl-macros nil)
 
 (defun songbook-indent-line ()
-  "Indent current line as SONGBOOK code."
+  "Indent current line as songbook code."
   (interactive)
   (beginning-of-line)
   (if (bobp)
       (indent-line-to 0)	   ; First line is always non-indented
     (let ((not-indented t) cur-indent)
-      (if (looking-at "^[ \t]*\\(\\\\end\\)") ; If the line we are looking at is the end of a block, then decrease the indentation
+      (if (looking-at "^[ \t]*\\\\end") ; If the line we are looking at is the end of a block, then decrease the indentation
 	  (progn
 	    (save-excursion
 	      (forward-line -1)
@@ -82,11 +62,11 @@
 	(save-excursion
 	  (while not-indented ; Iterate backwards until we find an indentation hint
 	    (forward-line -1)
-	    (if (looking-at "^[ \t]*\\(\\\\end\\)") ; This hint indicates that we need to indent at the level of the END_ token
+	    (if (looking-at "^[ \t]*\\\\end") ; This hint indicates that we need to indent at the level of the END_ token
 		(progn
 		  (setq cur-indent (current-indentation))
 		  (setq not-indented nil))
-	      (if (looking-at "^[ \t]*\\(\\\\begin\\)") ; This hint indicates that we need to indent an extra level
+	      (if (looking-at "^[ \t]*\\\\begin") ; This hint indicates that we need to indent an extra level
 		  (progn
 		    (setq cur-indent (+ (current-indentation) 2)) ; Do the actual indenting
 		    (setq not-indented nil))
@@ -96,28 +76,22 @@
 	  (indent-line-to cur-indent)
 	(indent-line-to 0))))) ; If we didn't see an indentation hint, then allow no indentation
 
-(defvar songbook-mode-syntax-table
-  (let ((songbook-mode-syntax-table (make-syntax-table)))
-    
-					; Latex comment style
-    (modify-syntax-entry ?% "<" songbook-mode-syntax-table)
-    (modify-syntax-entry ?\n ">" songbook-mode-syntax-table)
-    songbook-mode-syntax-table)
-  "Syntax table for songbook-mode")
+;;songbook-mode
+(define-derived-mode songbook-mode latex-mode
+  "songbook-mode"
+  "A variant of LaTeX mode for Patacrep! songs."
 
-(defun songbook-mode ()
-  (interactive)
-  (kill-all-local-variables)
-  (use-local-map songbook-mode-map)
-  (set-syntax-table songbook-mode-syntax-table)
-  ;; Set up font-lock
-  (set (make-local-variable 'font-lock-defaults) '(songbook-font-lock-keywords))
-  ;; Register our indentation function
-  (set (make-local-variable 'indent-line-function) 'songbook-indent-line)  
-  (setq major-mode 'songbook-mode)
-  (setq mode-name "Songbook")
-  (run-hooks 'songbook-mode-hook))
+  ;;add keywords for highlighting
+  (font-lock-add-keywords nil `((,songbook-commands-regexp . 'font-lock-keyword-face)
+				(,songbook-macros-regexp . 'font-lock-variable-name-face)
+				("\\\\\\[[^\]]+\]" . 'font-lock-constant-face)))
+
+  ;;clear memory
+  (setq songbook-commands-regexp nil)
+  (setq songbook-macros-regexp nil)
+
+  ;;register indenting function
+  (set (make-local-variable 'indent-line-function) 'songbook-indent-line))
 
 (provide 'songbook-mode)
-
 ;;; songbook-mode.el ends here
