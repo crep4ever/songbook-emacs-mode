@@ -93,5 +93,5 @@
   ;;register indenting function
   (set (make-local-variable 'indent-line-function) 'songbook-indent-line))
 
-(provide 'songbook-mode)
-;;; songbook-mode.el ends here
+(provide 'songbook)
+;;; songbook.el ends here
