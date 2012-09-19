@@ -43,7 +43,7 @@
 
 ;;clear memory
 (setq songbook-commands nil)
-(setq mylsl-macros nil)
+(setq songbook-macros nil)
 
 (defun songbook-indent-line ()
   "Indent current line as songbook code."
