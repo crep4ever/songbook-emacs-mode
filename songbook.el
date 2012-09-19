@@ -86,10 +86,6 @@
 				(,songbook-macros-regexp . 'font-lock-variable-name-face)
 				("\\\\\\[[^\]]+\]" . 'font-lock-constant-face)))
 
-  ;;clear memory
-  (setq songbook-commands-regexp nil)
-  (setq songbook-macros-regexp nil)
-
   ;;register indenting function
   (set (make-local-variable 'indent-line-function) 'songbook-indent-line))
 
